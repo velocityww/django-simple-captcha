@@ -53,10 +53,10 @@ class CaptchaStore(Document):
     @classmethod
     def generate_key(cls, generator=None):
         challenge, response = captcha_settings.get_challenge(generator)()
-        store = cls.objects.create(challenge=challenge, response=response)
-        logger.debug("Created a captcha doc in MongoDB %r", store)
-
-        return store.hashkey
+        captcha_document = cls(challenge=challenge, response=response)
+        captcha_document.save()
+        logger.debug("Created a captcha doc in MongoDB %r", captcha_document)
+        return captcha_document.hashkey
 
     @classmethod
     def pick(cls):
