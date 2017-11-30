@@ -1,5 +1,5 @@
 from captcha.conf import settings as captcha_settings
-from django.db import models
+from mongoengine import Document, StringField, DateTimeField
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.encoding import smart_text
@@ -22,11 +22,11 @@ logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class CaptchaStore(models.Model):
-    challenge = models.CharField(blank=False, max_length=32)
-    response = models.CharField(blank=False, max_length=32)
-    hashkey = models.CharField(blank=False, max_length=40, unique=True)
-    expiration = models.DateTimeField(blank=False)
+class CaptchaStore(Document):
+    challenge = StringField(required=True, max_length=32, db_field='c')
+    response = StringField(required=True, max_length=32, db_field='r')
+    hashkey = StringField(required=True, max_length=40, db_field='h', unique=True)
+    expiration = DateTimeField(required=True, db_field='e')
 
     def save(self, *args, **kwargs):
         self.response = self.response.lower()
